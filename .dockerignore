@@ -1,0 +1,9 @@
+.git
+data
+results
+__pycache__
+*.zip
+*.csv
+.env
+.env.*
+.DS_Store

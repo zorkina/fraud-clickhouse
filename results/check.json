@@ -1,0 +1,15 @@
+{
+  "source_file": "test.csv",
+  "source_sha256": "4129db5d9079f907d9a38aefc170f5e105a650a8273457aaae02a1f735516eac",
+  "csv_rows": 262144,
+  "kafka_messages": 262144,
+  "clickhouse_rows": {
+    "transactions_base": 262144,
+    "transactions_optimized": 262144
+  },
+  "all_columns_compared": true,
+  "result_rows": 51,
+  "sql_matches_python": true,
+  "projection_used": true,
+  "clickhouse_version": "25.8.33.6"
+}

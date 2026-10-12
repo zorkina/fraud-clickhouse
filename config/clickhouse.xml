@@ -1,0 +1,19 @@
+<clickhouse>
+    <logger>
+        <level>warning</level>
+        <console>true</console>
+    </logger>
+    <background_schedule_pool_size>16</background_schedule_pool_size>
+    <background_message_broker_schedule_pool_size>4</background_message_broker_schedule_pool_size>
+    <background_buffer_flush_schedule_pool_size>4</background_buffer_flush_schedule_pool_size>
+    <background_distributed_schedule_pool_size>4</background_distributed_schedule_pool_size>
+    <max_server_memory_usage>1600000000</max_server_memory_usage>
+    <kafka>
+        <auto_offset_reset>earliest</auto_offset_reset>
+    </kafka>
+    <query_log>
+        <database>system</database>
+        <table>query_log</table>
+        <flush_interval_milliseconds>1000</flush_interval_milliseconds>
+    </query_log>
+</clickhouse>

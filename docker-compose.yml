@@ -1,0 +1,94 @@
+name: fraud-clickhouse
+
+services:
+  kafka:
+    image: apache/kafka:3.9.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG_RETENTION_MS: -1
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_HEAP_OPTS: -Xms256m -Xmx512m
+      CLUSTER_ID: TmlFSE9OVHJpS1J4UjQ0Mw
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ['CMD', '/opt/kafka/bin/kafka-topics.sh', '--bootstrap-server', 'localhost:9092', '--list']
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+    networks: [fraud]
+
+  kafka-init:
+    image: apache/kafka:3.9.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ['/bin/bash', '-ec']
+    command:
+      - /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic transactions_ch --partitions 1 --replication-factor 1 --config retention.ms=-1
+    networks: [fraud]
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8.33.6
+    environment:
+      CLICKHOUSE_USER: student
+      CLICKHOUSE_PASSWORD: fraud_local
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./config/clickhouse.xml:/etc/clickhouse-server/config.d/homework.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    mem_limit: 2g
+    healthcheck:
+      test: ['CMD', 'clickhouse-client', '--user', 'student', '--password', 'fraud_local', '--query', 'SELECT 1']
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+    restart: unless-stopped
+    networks: [fraud]
+
+  tools:
+    build: .
+    image: fraud-clickhouse-tools:local
+    profiles: [tools]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: transactions_ch
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: student
+      CLICKHOUSE_PASSWORD: fraud_local
+    volumes:
+      - ./data:/app/data:ro
+      - ./results:/app/results
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      clickhouse:
+        condition: service_healthy
+    networks: [fraud]
+
+networks:
+  fraud:
+    driver: bridge
+
+volumes:
+  kafka_data:
+  clickhouse_data:

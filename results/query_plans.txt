@@ -1,0 +1,41 @@
+base
+Expression (Project names)
+  Sorting (Sorting for ORDER BY)
+    Expression ((Before ORDER BY + Projection))
+      Aggregating
+        Expression ((Before GROUP BY + Change column names to column identifiers))
+          ReadFromMergeTree (fraud.transactions_base)
+          Indexes:
+            PrimaryKey
+              Condition: true
+              Parts: 1/1
+              Granules: 35/35
+              Ranges: 1
+
+optimized_without_projection
+Expression (Project names)
+  Sorting (Sorting for ORDER BY)
+    Expression ((Before ORDER BY + Projection))
+      Aggregating
+        Expression ((Before GROUP BY + Change column names to column identifiers))
+          ReadFromMergeTree (fraud.transactions_optimized)
+          Indexes:
+            PrimaryKey
+              Condition: true
+              Parts: 1/1
+              Granules: 33/33
+              Ranges: 1
+
+optimized
+Expression (Project names)
+  Sorting (Sorting for ORDER BY)
+    Expression ((Before ORDER BY + Projection))
+      Aggregating
+        Expression
+          ReadFromMergeTree (by_state)
+          Indexes:
+            PrimaryKey
+              Condition: true
+              Parts: 1/1
+              Granules: 1/33
+              Ranges: 1

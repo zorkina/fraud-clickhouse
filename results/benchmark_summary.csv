@@ -1,0 +1,4 @@
+variant,runs,server_ms_median,client_ms_median,read_rows_median,read_bytes_median,memory_usage_max
+base,7,28,29.284,262144,11671948,4221868
+optimized_without_projection,7,25,27.33,262144,4718592,4234056
+optimized,7,1,2.537,51,8729,4224008

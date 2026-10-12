@@ -1,0 +1,3 @@
+table,rows,parts,bytes_on_disk,compressed_bytes,uncompressed_bytes
+transactions_base,262144,1,20455657,20450274,44800153
+transactions_optimized,262144,1,9700750,9693664,28293525
