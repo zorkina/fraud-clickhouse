@@ -1,0 +1,7 @@
+FROM python:3.11-slim-bookworm
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+RUN apt-get update && apt-get install -y --no-install-recommends chromium fonts-liberation \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir playwright==1.55.0
+WORKDIR /workspace/dbt
+CMD ["python", "-m", "scripts.screenshot"]

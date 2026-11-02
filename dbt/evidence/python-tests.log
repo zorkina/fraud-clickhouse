@@ -1,0 +1,50 @@
+test_parses_money_and_target (test_data.DataTests.test_parses_money_and_target) ... ok
+test_rejects_ambiguous_timezone (test_data.DataTests.test_rejects_ambiguous_timezone) ... ok
+test_rejects_empty_dataset (test_data.DataTests.test_rejects_empty_dataset) ... ok
+test_rejects_empty_merchant (test_data.DataTests.test_rejects_empty_merchant) ... ok
+test_rejects_extra_money_precision (test_data.DataTests.test_rejects_extra_money_precision) ... ok
+test_rejects_infinite_coordinate (test_data.DataTests.test_rejects_infinite_coordinate) ... ok
+test_rejects_invalid_date (test_data.DataTests.test_rejects_invalid_date) ... ok
+test_rejects_missing_target (test_data.DataTests.test_rejects_missing_target) ... ok
+test_rejects_nan_money (test_data.DataTests.test_rejects_nan_money) ... ok
+test_rejects_negative_money (test_data.DataTests.test_rejects_negative_money) ... ok
+test_rejects_out_of_range_longitude (test_data.DataTests.test_rejects_out_of_range_longitude) ... ok
+test_rejects_wrong_target (test_data.DataTests.test_rejects_wrong_target) ... ok
+test_requires_label (test_data.DataTests.test_requires_label) ... ok
+test_source_is_not_modified (test_data.DataTests.test_source_is_not_modified) ... ok
+test_source_totals (test_data.DataTests.test_source_totals) ... ok
+test_all_models_documented (test_project.ProjectTests.test_all_models_documented) ... ok
+test_all_packages_used (test_project.ProjectTests.test_all_packages_used) ... ok
+test_required_checks_are_not_disabled (test_project.ProjectTests.test_required_checks_are_not_disabled) ... ok
+test_seed_has_50_states_and_dc (test_project.ProjectTests.test_seed_has_50_states_and_dc) ... ok
+test_six_marts (test_project.ProjectTests.test_six_marts) ... ok
+test_sql_uses_dbt_dependencies (test_project.ProjectTests.test_sql_uses_dbt_dependencies) ... ok
+test_ten_native_unit_tests (test_project.ProjectTests.test_ten_native_unit_tests) ... ok
+test_comparison_detects_duplicate_key (test_reference.ReferenceTests.test_comparison_detects_duplicate_key) ... ok
+test_comparison_detects_missing_group (test_reference.ReferenceTests.test_comparison_detects_missing_group) ... ok
+test_comparison_detects_wrong_metric (test_reference.ReferenceTests.test_comparison_detects_wrong_metric) ... ok
+test_customer_names_normalize (test_reference.ReferenceTests.test_customer_names_normalize) ... ok
+test_dc_is_retained (test_reference.ReferenceTests.test_dc_is_retained) ... ok
+test_empty_percentile_is_error (test_reference.ReferenceTests.test_empty_percentile_is_error) ... ok
+test_fraud_prefix_is_not_a_label (test_reference.ReferenceTests.test_fraud_prefix_is_not_a_label) ... ok
+test_high_customer_threshold (test_reference.ReferenceTests.test_high_customer_threshold) ... ok
+test_linear_percentile (test_reference.ReferenceTests.test_linear_percentile) ... ok
+test_percentage_is_transaction_weighted (test_reference.ReferenceTests.test_percentage_is_transaction_weighted) ... ok
+test_single_value_percentile (test_reference.ReferenceTests.test_single_value_percentile) ... ok
+test_small_customer_not_high (test_reference.ReferenceTests.test_small_customer_not_high) ... ok
+test_unknown_state_fails (test_reference.ReferenceTests.test_unknown_state_fails) ... ok
+test_zero_fraud_baseline (test_reference.ReferenceTests.test_zero_fraud_baseline) ... ok
+test_casts_both_operands (test_sql_templates.RateTemplateTests.test_casts_both_operands) ... ok
+test_decimal_percentage (test_sql_templates.RateTemplateTests.test_decimal_percentage) ... ok
+test_full_fraud (test_sql_templates.RateTemplateTests.test_full_fraud) ... ok
+test_integer_threshold (test_sql_templates.RateTemplateTests.test_integer_threshold) ... ok
+test_sums_remain_decimal (test_sql_templates.RateTemplateTests.test_sums_remain_decimal) ... ok
+test_zero_frauds (test_sql_templates.RateTemplateTests.test_zero_frauds) ... ok
+test_zero_turnover (test_sql_templates.RateTemplateTests.test_zero_turnover) ... ok
+test_expected_rows_have_the_same_columns (test_unit_fixtures.UnitFixtureTests.test_expected_rows_have_the_same_columns) ... ok
+test_merchant_expectations_match_fixture (test_unit_fixtures.UnitFixtureTests.test_merchant_expectations_match_fixture) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.081s
+
+OK

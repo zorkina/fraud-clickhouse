@@ -1,0 +1,9 @@
+[0m15:41:02  Running with dbt=1.10.13
+[0m15:41:02  Registered adapter: clickhouse=1.9.6
+[0m15:41:02  Unable to do partial parsing because config vars, config profile, or config target have changed
+[0m15:41:04  Found 7 models, 188 data tests, 1 seed, 1 source, 881 macros, 10 unit tests
+[0m15:41:04  
+[0m15:41:04  Concurrency: 1 threads (target='local')
+[0m15:41:04  
+[0m15:41:05  Building catalog
+[0m15:41:05  Catalog written to /workspace/dbt/target/catalog.json

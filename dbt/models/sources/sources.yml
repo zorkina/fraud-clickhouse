@@ -1,0 +1,101 @@
+version: 2
+sources:
+- name: raw
+  schema: transactions_db
+  description: Размеченные транзакции Kaggle. Слой загружается до запуска dbt.
+  tables:
+  - name: transactions
+    description: Полный train.csv с дополнительным номером строки row_id.
+    columns:
+    - name: row_id
+      description: Номер строки в исходном CSV. Технический ключ, начинается с 1.
+      data_tests:
+      - not_null
+      - unique
+    - name: transaction_time
+      description: Время из файла без преобразования в локальный часовой пояс.
+      data_tests:
+      - not_null
+    - name: merch
+      description: Название продавца.
+      data_tests:
+      - not_null
+    - name: cat_id
+      description: Категория покупки.
+      data_tests:
+      - not_null
+    - name: amount
+      description: Сумма транзакции в единицах исходного набора.
+      data_tests:
+      - not_null
+      - dbt_expectations.expect_column_values_to_be_between:
+          arguments:
+            min_value: 0
+    - name: name_1
+      description: Имя клиента, используется только для составного идентификатора.
+      data_tests:
+      - not_null
+    - name: name_2
+      description: Фамилия клиента, используется только для составного идентификатора.
+      data_tests:
+      - not_null
+    - name: gender
+      description: Пол клиента.
+      data_tests:
+      - not_null
+      - accepted_values:
+          arguments:
+            values:
+            - M
+            - F
+            quote: true
+    - name: us_state
+      description: Код штата или DC.
+      data_tests:
+      - not_null
+      - relationships:
+          arguments:
+            to: ref('states')
+            field: state_code
+    - name: lat
+      description: Широта клиента.
+      data_tests:
+      - not_null
+      - dbt_expectations.expect_column_values_to_be_between:
+          arguments:
+            min_value: -90
+            max_value: 90
+    - name: lon
+      description: Долгота клиента.
+      data_tests:
+      - not_null
+      - dbt_expectations.expect_column_values_to_be_between:
+          arguments:
+            min_value: -180
+            max_value: 180
+    - name: merchant_lat
+      description: Широта продавца.
+      data_tests:
+      - not_null
+      - dbt_expectations.expect_column_values_to_be_between:
+          arguments:
+            min_value: -90
+            max_value: 90
+    - name: merchant_lon
+      description: Долгота продавца.
+      data_tests:
+      - not_null
+      - dbt_expectations.expect_column_values_to_be_between:
+          arguments:
+            min_value: -180
+            max_value: 180
+    - name: target
+      description: 'Метка фрода из train.csv: 0 или 1, не прогноз модели.'
+      data_tests:
+      - not_null
+      - accepted_values:
+          arguments:
+            values:
+            - 0
+            - 1
+            quote: false

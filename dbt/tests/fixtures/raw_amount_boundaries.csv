@@ -1,0 +1,7 @@
+row_id,transaction_time,merch,cat_id,amount,name_1,name_2,gender,us_state,lat,lon,merchant_lat,merchant_lon,target
+1,2020-03-02 10:00:00,shop,food_dining,0,Ann,Smith,F,CA,30,-100,30.1,-100.1,0
+2,2020-03-02 10:00:00,shop,food_dining,99.99,Ann,Smith,F,CA,30,-100,30.1,-100.1,0
+3,2020-03-02 10:00:00,shop,food_dining,100,Ann,Smith,F,CA,30,-100,30.1,-100.1,0
+4,2020-03-02 10:00:00,shop,food_dining,999.99,Ann,Smith,F,CA,30,-100,30.1,-100.1,0
+5,2020-03-02 10:00:00,shop,food_dining,1000,Ann,Smith,F,CA,30,-100,30.1,-100.1,0
+6,2020-03-02 10:00:00,shop,food_dining,-1,Ann,Smith,F,CA,30,-100,30.1,-100.1,0

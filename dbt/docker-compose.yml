@@ -1,0 +1,85 @@
+name: fraud-dbt
+
+x-tools: &tools
+  image: fraud-dbt-tools:local
+  build:
+    context: .
+    dockerfile: Dockerfile
+  working_dir: /workspace/dbt
+  volumes:
+    - .:/workspace/dbt
+  environment:
+    CH_HOST: clickhouse
+    CH_PORT: "8123"
+    CH_USER: student
+    CH_PASSWORD: fraud_local
+    DBT_PROFILES_DIR: /workspace/dbt
+    DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+  networks:
+    - analytics
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8.33.6
+    environment:
+      CLICKHOUSE_USER: student
+      CLICKHOUSE_PASSWORD: fraud_local
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "127.0.0.1:8124:8123"
+    volumes:
+      - warehouse:/var/lib/clickhouse
+      - ./config/resources.xml:/etc/clickhouse-server/config.d/resources.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--user", "student", "--password", "fraud_local", "--query", "SELECT 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+    networks:
+      - analytics
+
+  tools:
+    <<: *tools
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    command: ["python", "-m", "scripts.run"]
+    profiles: ["tools"]
+
+  docs:
+    <<: *tools
+    command: ["dbt", "docs", "serve", "--host", "0.0.0.0", "--port", "8080", "--no-browser"]
+    ports:
+      - "127.0.0.1:8084:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/manifest.json', timeout=5)"]
+      interval: 5s
+      timeout: 8s
+      retries: 30
+    profiles: ["docs"]
+
+  screenshot:
+    image: fraud-dbt-screenshot:local
+    build:
+      context: .
+      dockerfile: Dockerfile.screenshot
+    working_dir: /workspace/dbt
+    volumes:
+      - .:/workspace/dbt
+    environment:
+      DOCS_URL: http://docs:8080
+    shm_size: 512mb
+    networks:
+      - analytics
+    profiles: ["tools"]
+
+volumes:
+  warehouse:
+
+networks:
+  analytics:

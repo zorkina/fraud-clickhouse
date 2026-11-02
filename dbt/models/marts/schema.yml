@@ -1,0 +1,412 @@
+version: 2
+models:
+- name: mart_daily_state_metrics
+  description: Дневные метрики. Одна строка на дату и штат.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - transaction_date
+        - us_state
+  columns:
+  - name: transaction_date
+    description: Дата транзакций в группе.
+    data_tests:
+    - not_null
+  - name: us_state
+    description: Код штата или DC.
+    data_tests:
+    - not_null
+    - &id003
+      relationships:
+        arguments:
+          to: ref('states')
+          field: state_code
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - &id001
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - &id002
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: average_amount
+    description: Средний чек по всем транзакциям группы.
+    data_tests:
+    - not_null
+    - &id007
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: p95_amount
+    description: Точный 95-й перцентиль с линейной интерполяцией quantileExactInclusive.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: large_transactions_count
+    description: Число транзакций от large_amount включительно.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: large_transactions_pct
+    description: Процент крупных транзакций по количеству.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 100
+- name: mart_fraud_by_category
+  description: Фрод по категориям покупок. Для поиска лидеров сортировать по fraud_rate.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - category
+  columns:
+  - name: category
+    description: Категория покупки.
+    data_tests:
+    - not_null
+    - unique
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - *id001
+  - name: fraud_count
+    description: Число транзакций с is_fraud=1.
+    data_tests:
+    - not_null
+    - &id004
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: fraud_rate
+    description: 100 * fraud_count / transactions_count. Процент транзакций, не доля суммы.
+    data_tests:
+    - not_null
+    - &id005
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - *id002
+  - name: fraud_amount
+    description: Сумма транзакций с меткой фрода.
+    data_tests:
+    - not_null
+    - &id006
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: fraud_amount_pct
+    description: Процент суммы, приходящийся на фрод. При нулевой общей сумме 0.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 100
+- name: mart_fraud_by_state
+  description: Фрод и число клиентов и продавцов по штату, включая DC.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - us_state
+  columns:
+  - name: us_state
+    description: Код штата или DC.
+    data_tests:
+    - not_null
+    - unique
+    - *id003
+  - name: state_name
+    description: Название из справочника states.
+    data_tests:
+    - not_null
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - *id001
+  - name: fraud_count
+    description: Число транзакций с is_fraud=1.
+    data_tests:
+    - not_null
+    - *id004
+  - name: fraud_rate
+    description: 100 * fraud_count / transactions_count. Процент транзакций, не доля суммы.
+    data_tests:
+    - not_null
+    - *id005
+  - name: unique_customers
+    description: Точное число разных составных customer_id.
+    data_tests:
+    - not_null
+    - &id008
+      dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+  - name: unique_merchants
+    description: Точное число разных названий продавцов.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - *id002
+  - name: fraud_amount
+    description: Сумма транзакций с меткой фрода.
+    data_tests:
+    - not_null
+    - *id006
+- name: mart_customer_risk_profile
+  description: Ретроспективный профиль клиента за весь доступный период. Метки target известны на момент анализа.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - customer_id
+  columns:
+  - name: customer_id
+    description: Составной идентификатор клиента, совпадающий с ключом staging.
+    data_tests:
+    - not_null
+    - unique
+  - name: first_transaction_at
+    description: Начало наблюдаемой истории клиента.
+    data_tests:
+    - not_null
+  - name: last_transaction_at
+    description: Конец наблюдаемой истории клиента.
+    data_tests:
+    - not_null
+  - name: active_days
+    description: Число дат с хотя бы одной транзакцией клиента.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - *id001
+  - name: fraud_count
+    description: Число транзакций с is_fraud=1.
+    data_tests:
+    - not_null
+    - *id004
+  - name: fraud_rate
+    description: 100 * fraud_count / transactions_count. Процент транзакций, не доля суммы.
+    data_tests:
+    - not_null
+    - *id005
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - *id002
+  - name: fraud_amount
+    description: Сумма транзакций с меткой фрода.
+    data_tests:
+    - not_null
+    - *id006
+  - name: average_amount
+    description: Средний чек по всем транзакциям группы.
+    data_tests:
+    - not_null
+    - *id007
+  - name: max_amount
+    description: Максимальная сумма транзакции клиента.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: insufficient_history
+    description: 1 при числе транзакций меньше customer_high_min_transactions.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false
+  - name: risk_level
+    description: 'HIGH: минимум 20 транзакций и fraud_rate >= 5%; MEDIUM: иной клиент с фродом; LOW: без фрода.
+      Описывает историю.'
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - HIGH
+          - MEDIUM
+          - LOW
+          quote: true
+- name: mart_hourly_fraud_pattern
+  description: Фрод по сочетанию дня недели и часа за весь период. Не переводит время в часовой пояс каждого штата.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - day_of_week
+        - transaction_hour
+  columns:
+  - name: day_of_week
+    description: День недели ISO, от 1 до 7.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+          max_value: 7
+  - name: transaction_hour
+    description: Час исходного времени, от 0 до 23.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 23
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - *id001
+  - name: fraud_count
+    description: Число транзакций с is_fraud=1.
+    data_tests:
+    - not_null
+    - *id004
+  - name: fraud_rate
+    description: 100 * fraud_count / transactions_count. Процент транзакций, не доля суммы.
+    data_tests:
+    - not_null
+    - *id005
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - *id002
+  - name: fraud_amount
+    description: Сумма транзакций с меткой фрода.
+    data_tests:
+    - not_null
+    - *id006
+  - name: baseline_fraud_rate
+    description: Fraud rate по всем транзакциям всего периода.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: risk_lift
+    description: Fraud rate окна, деленный на общую долю фрода. При отсутствии фрода в наборе 0.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: is_high_risk
+    description: 1 при минимум 100 транзакциях, наличии фрода и уровне не ниже двух общих fraud rate.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false
+- name: mart_merchant_analytics
+  description: Оборот, доля фрода и признак подозрительности по продавцу.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - merchant
+  columns:
+  - name: merchant
+    description: Название продавца.
+    data_tests:
+    - not_null
+    - unique
+  - name: transactions_count
+    description: Число транзакций в группе, включая фрод.
+    data_tests:
+    - not_null
+    - *id001
+  - name: unique_customers
+    description: Точное число разных составных customer_id.
+    data_tests:
+    - not_null
+    - *id008
+  - name: fraud_count
+    description: Число транзакций с is_fraud=1.
+    data_tests:
+    - not_null
+    - *id004
+  - name: fraud_rate
+    description: 100 * fraud_count / transactions_count. Процент транзакций, не доля суммы.
+    data_tests:
+    - not_null
+    - *id005
+  - name: total_amount
+    description: Сумма всех транзакций в группе.
+    data_tests:
+    - not_null
+    - *id002
+  - name: fraud_amount
+    description: Сумма транзакций с меткой фрода.
+    data_tests:
+    - not_null
+    - *id006
+  - name: average_amount
+    description: Средний чек по всем транзакциям группы.
+    data_tests:
+    - not_null
+    - *id007
+  - name: first_transaction_date
+    description: Первая дата транзакции продавца в наборе.
+    data_tests:
+    - not_null
+  - name: last_transaction_date
+    description: Последняя дата транзакции продавца в наборе.
+    data_tests:
+    - not_null
+  - name: is_suspicious
+    description: 1 при минимум 30 транзакциях и fraud_rate >= 2%. Пороговое правило анализа, не классификатор.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false

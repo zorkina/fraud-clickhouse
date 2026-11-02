@@ -1,0 +1,75 @@
+{
+  "dbt_tests": {
+    "unit_tests_passed": 10,
+    "data_tests_passed": 188
+  },
+  "sqlfluff": "passed",
+  "models": 7,
+  "marts": 6,
+  "code_sha256": "555e64007e9e0391794d8c1c6cc9620f81f42476abe8338c574b82771c986655",
+  "source": {
+    "rows": 786431,
+    "fraud_count": 4504,
+    "amount_cents": 5523993249,
+    "sha256": "2fd291f0d66cbb1f3c3e442396f3725d4cbde650d5dd0c16322c5230d3776b99"
+  },
+  "versions": {
+    "dbt-core": "1.10.13",
+    "dbt-clickhouse": "1.9.6",
+    "sqlfluff": "3.4.2",
+    "sqlfluff-templater-dbt": "3.4.2",
+    "clickhouse-connect": "0.8.18"
+  },
+  "dbt_test_threads": 1,
+  "status": "passed",
+  "completed_at": "2026-11-02T15:41:15.692016+00:00",
+  "reconciliation": {
+    "mart_daily_state_metrics": {
+      "rows": 21386,
+      "matches_reference": true
+    },
+    "mart_fraud_by_category": {
+      "rows": 14,
+      "matches_reference": true
+    },
+    "mart_fraud_by_state": {
+      "rows": 51,
+      "matches_reference": true
+    },
+    "mart_customer_risk_profile": {
+      "rows": 965,
+      "matches_reference": true
+    },
+    "mart_hourly_fraud_pattern": {
+      "rows": 168,
+      "matches_reference": true
+    },
+    "mart_merchant_analytics": {
+      "rows": 693,
+      "matches_reference": true
+    }
+  },
+  "screenshot": "dbt-docs.png",
+  "dag": "dbt-dag.png",
+  "evidence_sha256": {
+    "dbt-dag.png": "ea8b023caa5a045292c1a5d51be6fdca75752cd113ba632824ddad9345023cd1",
+    "dbt-debug.log": "65aef05ece516d6594e43d6d0a09303960755b6d4ee8bddb5c6a4fb3603924c0",
+    "dbt-deps.log": "7cfb0e67559a6aaa133e4da9427160091f21c771071049c2b5664e9da2d52bf5",
+    "dbt-docs.log": "751dfdaffa7da1e5fe62d42eb6f700bfe8798fa86376b7e6b3d3acf01b9dd916",
+    "dbt-docs.png": "df7d6268899606cde166f7b61f762fd30529e5aafd3a8d0e287357e76b123b2f",
+    "dbt-run-lint-fix.log": "5d85ef0b8c61e6013439b52a77a709e7b66a5ba42eca7380eb7ab3ad58d55e81",
+    "dbt-run.log": "531173286a8fab29ab71273701d199bb75a2c7b79359d4c2c5ebc2edf3b7df60",
+    "dbt-seed.log": "7af73793d7c01036f1f57537a97c2f1edc370cbf78b8a1a1588b141f460c6c45",
+    "dbt-test.log": "c602d868395289f1aaf38273994d48c76771ccfb6b59d2ea89cbbe88b8923509",
+    "dbt_test_results.json": "490bf286e3b25df7e0a4a17a3424b969ad5c328dcee70febcae87cc6a49ea402",
+    "python-tests.log": "8941c81fed7eee078eea40fd954d422ba671c4285cd58cb8b0a9f41b57722bb6",
+    "reconciliation.json": "970a006c5ef711b26e8ed1bfdde2307cc86a829c7a34b1fc0148f3db411ea22f",
+    "run.json": "20ca83d6bc35fc5714e39aa818179ea739e9fca3c6393b13600998c779290109",
+    "screenshot.json": "f9bcccbcf1d3feb22bb5b5ecc1984a819c30c6c24dca14585e2290acd539f909",
+    "source.json": "379c78f8d8973237f69354f1e6aae1044900ba7cfccbb0d1adaa249d8a677ee3",
+    "sql-equivalence.json": "f0ac6a18504af8ef5591daffe41fdcc6dac36b22cab51fc045937df0eef9a743",
+    "sqlfluff.log": "a6411003fe5e0ef164e2e8b8bf7bceb1cd69f687b3320b217757be354662393e",
+    "validated-files.json": "f0d366b30f5a5f087c6f45fca61a9dcb4231c6ecb146f2d1a779337eecd37768",
+    "versions.json": "56f8d331b8416c64746f40fd8f7d33332039d3225f2dbe643aa50ffb8a9651c9"
+  }
+}
