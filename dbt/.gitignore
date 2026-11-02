@@ -1,0 +1,13 @@
+/data/*
+!/data/.gitkeep
+/target/
+/dbt_packages/
+/logs/
+__pycache__/
+*.pyc
+.env
+.env.*
+.DS_Store
+!/seeds/*.csv
+!/tests/fixtures/*.csv
+!/evidence/*.log

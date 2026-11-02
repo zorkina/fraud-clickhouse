@@ -1,0 +1,18 @@
+fraud_analytics:
+  target: local
+  outputs:
+    local:
+      type: clickhouse
+      host: "{{ env_var('CH_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('CH_PORT', '8124') | int }}"
+      user: "{{ env_var('CH_USER', 'student') }}"
+      password: "{{ env_var('CH_PASSWORD', 'fraud_local') }}"
+      schema: analytics
+      secure: false
+      verify: false
+      threads: 1
+      connect_timeout: 10
+      send_receive_timeout: 300
+      custom_settings:
+        max_threads: 2
+        join_use_nulls: 1

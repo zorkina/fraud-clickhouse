@@ -1,0 +1,24 @@
+{
+  "dbt_tests": {
+    "unit_tests_passed": 10,
+    "data_tests_passed": 188
+  },
+  "sqlfluff": "passed",
+  "models": 7,
+  "marts": 6,
+  "code_sha256": "555e64007e9e0391794d8c1c6cc9620f81f42476abe8338c574b82771c986655",
+  "source": {
+    "rows": 786431,
+    "fraud_count": 4504,
+    "amount_cents": 5523993249,
+    "sha256": "2fd291f0d66cbb1f3c3e442396f3725d4cbde650d5dd0c16322c5230d3776b99"
+  },
+  "versions": {
+    "dbt-core": "1.10.13",
+    "dbt-clickhouse": "1.9.6",
+    "sqlfluff": "3.4.2",
+    "sqlfluff-templater-dbt": "3.4.2",
+    "clickhouse-connect": "0.8.18"
+  },
+  "dbt_test_threads": 1
+}

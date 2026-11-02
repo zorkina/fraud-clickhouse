@@ -1,0 +1,44 @@
+[0m14:05:51  Running with dbt=1.10.13
+[0m14:05:51  dbt version: 1.10.13
+[0m14:05:51  python version: 3.11.16
+[0m14:05:51  python path: /usr/local/bin/python3.11
+[0m14:05:51  os info: Linux-7.0.14-linuxkit-aarch64-with-glibc2.36
+[0m14:05:51  Using profiles dir at /workspace/dbt
+[0m14:05:51  Using profiles.yml file at /workspace/dbt/profiles.yml
+[0m14:05:51  Using dbt_project.yml file at /workspace/dbt/dbt_project.yml
+[0m14:05:51  adapter type: clickhouse
+[0m14:05:51  adapter version: 1.9.6
+[0m14:05:52  Configuration:
+[0m14:05:52    profiles.yml file [[32mOK found and valid[0m]
+[0m14:05:52    dbt_project.yml file [[32mOK found and valid[0m]
+[0m14:05:52  Required dependencies:
+[0m14:05:52   - git [[32mOK found[0m]
+
+[0m14:05:52  Connection:
+[0m14:05:52    driver: None
+[0m14:05:52    host: clickhouse
+[0m14:05:52    port: 8123
+[0m14:05:52    user: student
+[0m14:05:52    schema: analytics
+[0m14:05:52    retries: 1
+[0m14:05:52    cluster: None
+[0m14:05:52    database_engine: None
+[0m14:05:52    cluster_mode: False
+[0m14:05:52    secure: False
+[0m14:05:52    verify: False
+[0m14:05:52    client_cert: None
+[0m14:05:52    client_cert_key: None
+[0m14:05:52    connect_timeout: 10
+[0m14:05:52    send_receive_timeout: 300
+[0m14:05:52    sync_request_timeout: 5
+[0m14:05:52    compress_block_size: 1048576
+[0m14:05:52    compression: 
+[0m14:05:52    check_exchange: True
+[0m14:05:52    custom_settings: {'max_threads': 2, 'join_use_nulls': 1}
+[0m14:05:52    use_lw_deletes: False
+[0m14:05:52    allow_automatic_deduplication: False
+[0m14:05:52    tcp_keepalive: False
+[0m14:05:52  Registered adapter: clickhouse=1.9.6
+[0m14:05:53    Connection test: [[32mOK connection ok[0m]
+
+[0m14:05:53  [32mAll checks passed![0m

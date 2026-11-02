@@ -1,0 +1,15 @@
+[0m14:06:09  Running with dbt=1.10.13
+[0m14:06:11  Registered adapter: clickhouse=1.9.6
+[0m14:06:13  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m14:06:20  Found 7 models, 188 data tests, 1 seed, 1 source, 881 macros, 10 unit tests
+[0m14:06:20  
+[0m14:06:20  Concurrency: 2 threads (target='local')
+[0m14:06:20  
+[0m14:06:34  1 of 1 START seed file `reference`.`states` .................................... [RUN]
+[0m14:06:34  1 of 1 OK loaded seed file reference.states .................................... [[32mCREATE 51[0m in 0.73s]
+[0m14:06:34  
+[0m14:06:34  Finished running 1 seed in 0 hours 0 minutes and 14.50 seconds (14.50s).
+[0m14:06:35  
+[0m14:06:35  [32mCompleted successfully[0m
+[0m14:06:35  
+[0m14:06:35  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=1

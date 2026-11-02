@@ -1,0 +1,8 @@
+{
+  "rows": 786431,
+  "daily_state_groups": 21386,
+  "p95_differences": 0,
+  "p95_max_absolute_difference": 0.0,
+  "datetime_differences": 0,
+  "clickhouse_version": "25.8.33.6"
+}

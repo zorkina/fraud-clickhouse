@@ -1,0 +1,17 @@
+[0m15:05:09  Running with dbt=1.10.13
+[0m15:05:09  Registered adapter: clickhouse=1.9.6
+[0m15:05:10  Unable to do partial parsing because config vars, config profile, or config target have changed
+[0m15:05:12  Found 7 models, 188 data tests, 1 seed, 1 source, 881 macros, 10 unit tests
+[0m15:05:12  
+[0m15:05:12  Concurrency: 1 threads (target='local')
+[0m15:05:12  
+[0m15:05:12  1 of 2 START sql table model `staging`.`stg_transactions` ...................... [RUN]
+[0m15:05:14  1 of 2 OK created sql table model `staging`.`stg_transactions` ................. [[32mOK[0m in 1.82s]
+[0m15:05:14  2 of 2 START sql table model `marts`.`mart_daily_state_metrics` ................ [RUN]
+[0m15:05:15  2 of 2 OK created sql table model `marts`.`mart_daily_state_metrics` ........... [[32mOK[0m in 0.34s]
+[0m15:05:15  
+[0m15:05:15  Finished running 2 table models in 0 hours 0 minutes and 2.40 seconds (2.40s).
+[0m15:05:15  
+[0m15:05:15  [32mCompleted successfully[0m
+[0m15:05:15  
+[0m15:05:15  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=2

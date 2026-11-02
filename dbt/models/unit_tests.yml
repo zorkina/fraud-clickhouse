@@ -1,0 +1,254 @@
+version: 2
+unit_tests:
+- name: amount_bucket_boundaries
+  description: amount bucket boundaries
+  model: stg_transactions
+  given:
+  - input: source('raw', 'transactions')
+    format: csv
+    fixture: raw_amount_boundaries
+  expect:
+    rows:
+    - amount: 0
+      amount_bucket: SMALL
+      is_large: 0
+    - amount: 99.99
+      amount_bucket: SMALL
+      is_large: 0
+    - amount: 100
+      amount_bucket: MEDIUM
+      is_large: 0
+    - amount: 999.99
+      amount_bucket: MEDIUM
+      is_large: 0
+    - amount: 1000
+      amount_bucket: LARGE
+      is_large: 1
+    - amount: -1
+      amount_bucket: INVALID
+      is_large: 0
+- name: normalization_and_iso_week
+  description: normalization and iso week
+  model: stg_transactions
+  given:
+  - input: source('raw', 'transactions')
+    format: csv
+    fixture: raw_normalization
+  expect:
+    rows:
+    - merchant: shop
+      category: food_dining
+      gender: F
+      us_state: CA
+      transaction_date: '2020-03-08'
+      transaction_hour: 23
+      day_of_week: 7
+      is_weekend: 1
+      is_fraud: 1
+    - merchant: shop-2
+      category: shopping_net
+      gender: F
+      us_state: CA
+      transaction_date: '2020-03-09'
+      transaction_hour: 0
+      day_of_week: 1
+      is_weekend: 0
+      is_fraud: 0
+- name: daily_grain_and_exact_percentile
+  description: daily grain and exact percentile
+  model: mart_daily_state_metrics
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: daily_grain
+  expect:
+    rows:
+    - transaction_date: '2020-03-02'
+      us_state: CA
+      transactions_count: 2
+      total_amount: 40
+      average_amount: 20
+      p95_amount: 29
+      large_transactions_pct: 0
+    - transaction_date: '2020-03-02'
+      us_state: NY
+      transactions_count: 1
+      total_amount: 1000
+      average_amount: 1000
+      p95_amount: 1000
+      large_transactions_pct: 100
+    - transaction_date: '2020-03-03'
+      us_state: CA
+      transactions_count: 1
+      total_amount: 0
+      average_amount: 0
+      p95_amount: 0
+      large_transactions_pct: 0
+- name: category_fraud_and_zero_turnover
+  description: category fraud and zero turnover
+  model: mart_fraud_by_category
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: category_metrics
+  expect:
+    rows:
+    - category: food_dining
+      transactions_count: 2
+      fraud_count: 1
+      fraud_rate: 50
+      total_amount: 40
+      fraud_amount: 30
+      fraud_amount_pct: 75
+    - category: travel
+      transactions_count: 1
+      fraud_count: 0
+      fraud_rate: 0
+      total_amount: 0
+      fraud_amount: 0
+      fraud_amount_pct: 0
+- name: state_distinct_counts_and_dc
+  description: state distinct counts and dc
+  model: mart_fraud_by_state
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: state_metrics
+  - input: ref('states')
+    rows:
+    - state_code: CA
+      state_name: California
+      is_state: 1
+    - state_code: DC
+      state_name: District of Columbia
+      is_state: 0
+  expect:
+    rows:
+    - us_state: CA
+      state_name: California
+      transactions_count: 3
+      fraud_count: 1
+      unique_customers: 2
+      unique_merchants: 2
+      total_amount: 30
+      fraud_amount: 10
+    - us_state: DC
+      state_name: District of Columbia
+      transactions_count: 1
+      fraud_count: 0
+      unique_customers: 1
+      unique_merchants: 1
+      total_amount: 10
+      fraud_amount: 0
+- name: customer_risk_thresholds
+  description: customer risk thresholds
+  model: mart_customer_risk_profile
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: customer_risk
+  expect:
+    rows:
+    - customer_id: high
+      risk_level: HIGH
+      insufficient_history: 0
+      transactions_count: 20
+      fraud_count: 1
+    - customer_id: medium
+      risk_level: MEDIUM
+      insufficient_history: 1
+      transactions_count: 19
+      fraud_count: 1
+    - customer_id: low
+      risk_level: LOW
+      insufficient_history: 1
+      transactions_count: 1
+      fraud_count: 0
+- name: customer_observed_history
+  description: customer observed history
+  model: mart_customer_risk_profile
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: customer_history
+  expect:
+    rows:
+    - customer_id: c1
+      transactions_count: 2
+      active_days: 2
+      first_transaction_at: '2020-03-02 10:00:00'
+      last_transaction_at: '2020-03-04 12:00:00'
+      average_amount: 20
+      max_amount: 30
+      risk_level: LOW
+- name: merchant_flag_thresholds
+  description: merchant flag thresholds
+  model: mart_merchant_analytics
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: merchant_flags
+  expect:
+    rows:
+    - merchant: flagged
+      transactions_count: 50
+      fraud_rate: 2
+      is_suspicious: 1
+    - merchant: small
+      transactions_count: 29
+      fraud_rate: 3.4482758620689653
+      is_suspicious: 0
+    - merchant: clean
+      transactions_count: 30
+      fraud_rate: 0
+      is_suspicious: 0
+- name: hourly_risk_relative_to_baseline
+  description: hourly risk relative to baseline
+  model: mart_hourly_fraud_pattern
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: hourly_risk
+  expect:
+    rows:
+    - day_of_week: 1
+      transaction_hour: 0
+      transactions_count: 2
+      fraud_rate: 100
+      baseline_fraud_rate: 25
+      risk_lift: 4
+      is_high_risk: 1
+    - day_of_week: 1
+      transaction_hour: 10
+      transactions_count: 6
+      fraud_rate: 0
+      baseline_fraud_rate: 25
+      risk_lift: 0
+      is_high_risk: 0
+  overrides:
+    vars:
+      hourly_min_transactions: 2
+- name: hourly_without_fraud
+  description: hourly without fraud
+  model: mart_hourly_fraud_pattern
+  given:
+  - input: ref('stg_transactions')
+    format: csv
+    fixture: hourly_no_fraud
+  expect:
+    rows:
+    - day_of_week: 1
+      transaction_hour: 10
+      fraud_rate: 0
+      baseline_fraud_rate: 0
+      risk_lift: 0
+      is_high_risk: 0
+    - day_of_week: 7
+      transaction_hour: 23
+      fraud_rate: 0
+      baseline_fraud_rate: 0
+      risk_lift: 0
+      is_high_risk: 0
+  overrides:
+    vars:
+      hourly_min_transactions: 1

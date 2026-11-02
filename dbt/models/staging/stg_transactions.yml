@@ -1,0 +1,148 @@
+version: 2
+models:
+- name: stg_transactions
+  description: Одна строка на транзакцию. Нормализация строк, типов и временных признаков без фильтрации источника.
+  data_tests:
+  - dbt_expectations.expect_table_row_count_to_be_between:
+      arguments:
+        min_value: 1
+  columns:
+  - name: transaction_id
+    description: Хеш row_id. Уникален внутри загруженного набора.
+    data_tests:
+    - not_null
+    - unique
+  - name: customer_id
+    description: Составной ключ из нормализованных имени, фамилии, пола, штата и координат. Не банковский ID.
+    data_tests:
+    - not_null
+  - name: transaction_time
+    description: Время транзакции из источника.
+    data_tests:
+    - not_null
+  - name: transaction_date
+    description: Календарная дата из transaction_time.
+    data_tests:
+    - not_null
+  - name: transaction_hour
+    description: Час из исходного времени, 0-23.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+          max_value: 23
+  - name: day_of_week
+    description: 'Номер дня недели ISO: понедельник 1, воскресенье 7.'
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 1
+          max_value: 7
+  - name: is_weekend
+    description: Суббота или воскресенье.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false
+  - name: merchant
+    description: Название продавца без пробелов по краям. Префикс fraud_ не является меткой фрода.
+    data_tests:
+    - not_null
+  - name: category
+    description: Категория покупки в нижнем регистре.
+    data_tests:
+    - not_null
+  - name: amount
+    description: Сумма Decimal(18,2). Отрицательные значения не исправляются, их выявляют тесты.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: 0
+  - name: amount_bucket
+    description: 'SMALL: меньше 100, MEDIUM: от 100 до 1000, LARGE: от 1000. Границы задаются vars.'
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - SMALL
+          - MEDIUM
+          - LARGE
+          quote: true
+  - name: is_large
+    description: Сумма не меньше large_amount.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false
+  - name: gender
+    description: Нормализованный пол клиента.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - M
+          - F
+          quote: true
+  - name: us_state
+    description: Код штата в верхнем регистре.
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('states')
+          field: state_code
+  - name: latitude
+    description: Широта клиента.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: -90
+          max_value: 90
+  - name: longitude
+    description: Долгота клиента.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: -180
+          max_value: 180
+  - name: merchant_latitude
+    description: Широта продавца.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: -90
+          max_value: 90
+  - name: merchant_longitude
+    description: Долгота продавца.
+    data_tests:
+    - not_null
+    - dbt_expectations.expect_column_values_to_be_between:
+        arguments:
+          min_value: -180
+          max_value: 180
+  - name: is_fraud
+    description: Фактическая метка из target.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false

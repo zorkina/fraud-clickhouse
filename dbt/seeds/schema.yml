@@ -1,0 +1,25 @@
+version: 2
+seeds:
+- name: states
+  description: 50 штатов и DC. DC отмечен is_state=0.
+  columns:
+  - name: state_code
+    description: Двухбуквенный код.
+    data_tests:
+    - not_null
+    - unique
+  - name: state_name
+    description: Название.
+    data_tests:
+    - not_null
+    - unique
+  - name: is_state
+    description: Штат 1, округ DC 0.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 0
+          - 1
+          quote: false

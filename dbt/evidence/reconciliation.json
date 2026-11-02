@@ -1,0 +1,26 @@
+{
+  "mart_daily_state_metrics": {
+    "rows": 21386,
+    "matches_reference": true
+  },
+  "mart_fraud_by_category": {
+    "rows": 14,
+    "matches_reference": true
+  },
+  "mart_fraud_by_state": {
+    "rows": 51,
+    "matches_reference": true
+  },
+  "mart_customer_risk_profile": {
+    "rows": 965,
+    "matches_reference": true
+  },
+  "mart_hourly_fraud_pattern": {
+    "rows": 168,
+    "matches_reference": true
+  },
+  "mart_merchant_analytics": {
+    "rows": 693,
+    "matches_reference": true
+  }
+}
